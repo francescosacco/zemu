@@ -99,8 +99,9 @@ void z80_Flags_SetHalf( void ) ;
 void z80_Flags_ResetHalf( void ) ;
 bool z80_Flags_GetHalf( void ) ;
 void z80_Flags_CalculateHalf_sub( uint8_t a , uint8_t b ) ;
-void z80_Flags_CalculateHalf_add( uint8_t a , uint8_t b ) ;
+void z80_Flags_CalculateHalf_adc( uint8_t a , uint8_t b , bool c ) ;
 
 void z80_Flags_CalculateOverflowSub( uint8_t a , uint8_t b , uint8_t result ) ;
+void z80_Flags_CalculateOverflowAdc( uint8_t a , uint8_t b , bool c , uint8_t result ) ;
 
 #endif // Z80_REGISTERS_H

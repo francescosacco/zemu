@@ -278,6 +278,14 @@ void z80_Flags_CalculateOverflowSub( uint8_t a , uint8_t b , uint8_t result )
     z80_flags.pv = ( ( ( a ^ b ) & ( a ^ result ) & 0x80 ) != 0 ) ;
 }
 
+void z80_Flags_CalculateOverflowAdc( uint8_t a , uint8_t b , bool c , uint8_t result )
+{
+    uint8_t tmpB = b ;
+    
+    tmpB += ( c ) ? ( 0x01 ) : ( 0x00 ) ;
+    z80_flags.pv = ( ( ~( a ^ tmpB ) & ( a ^ result ) & 0x80 ) != 0 ) ;
+}
+
 void z80_Flags_SetZero( void )
 {
     z80_flags.z = 1 ;
@@ -352,7 +360,8 @@ void z80_Flags_CalculateHalf_sub( uint8_t a , uint8_t b )
     z80_flags.h = ( ( a & 0x0F ) < ( b & 0x0F ) ) ;
 }
 
-void z80_Flags_CalculateHalf_add( uint8_t a , uint8_t b )
+void z80_Flags_CalculateHalf_adc( uint8_t a , uint8_t b , bool c )
 {
-    z80_flags.h = ( ( a & 0x0F ) + ( b & 0x0F ) ) > 0x0F ;
+    uint8_t carry = ( c ) ? ( 0x01 ) : ( 0x00 ) ;
+    z80_flags.h = ( ( a & 0x0F ) + ( b & 0x0F ) + carry ) > 0x0F ;
 }
