@@ -24,16 +24,83 @@ typedef enum
     eSelectReg_regSP  = 0x03 , // xxxx.xx11
 } eSelectDoubleReg_t ;
 
-extern uint16_t z80_PC ;
-extern uint16_t z80_HL ;
+typedef enum
+{
+    eInterruptMode_0 = 0x00 ,
+    eInterruptMode_1 = 0x01 ,
+    eInterruptMode_2 = 0x02 ,
+} eInterruptMode_t ;
+
+typedef struct
+{
+    uint8_t c  : 1; // Carry
+    uint8_t n  : 1; // Add/Sub
+    uint8_t pv : 1; // Parity/OverFlow
+    uint8_t x3 : 1; // Not Used
+    uint8_t h  : 1; // Half Carry Flag
+    uint8_t x5 : 1; // Not Used
+    uint8_t z  : 1; // Zero Flag
+    uint8_t s  : 1; // Sign Flag
+} z80_flags_t ;
+
 extern uint16_t z80_SP ;
-extern bool z80_EI ;
-extern uint8_t z80_IM ;
+extern z80_flags_t z80_flags ;
 
 uint8_t z80_Regs_GetReg( eSelectReg_t eReg ) ;
 void    z80_Regs_SetReg( eSelectReg_t eReg , uint8_t value ) ;
 
 uint16_t z80_Regs_GetDReg( eSelectDoubleReg_t eReg ) ;
 void     z80_Regs_SetDReg( eSelectDoubleReg_t eReg , uint16_t value ) ;
+
+// Program Counter.
+uint16_t z80_Regs_GetPC( void ) ;
+uint16_t z80_Regs_GetAndIncPC( void ) ;
+void     z80_Regs_SetPC( uint16_t value ) ;
+
+// Index Register.
+uint16_t z80_Regs_GetIX( void ) ;
+void     z80_Regs_SetIX( uint16_t value ) ;
+
+// Interrupt Mode.
+eInterruptMode_t z80_Regs_GetIM( void ) ;
+void             z80_Regs_SetIM( eInterruptMode_t im ) ;
+
+// Interrupt Register.
+void z80_Regs_EnableInterrupt( void ) ;
+void z80_Regs_DisableInterrupt( void ) ;
+bool z80_Regs_GetInterrupt( void ) ;
+
+// Flags.
+void z80_Flags_SetCarry( void ) ;
+void z80_Flags_ResetCarry( void ) ;
+bool z80_Flags_GetCarry( void ) ;
+
+void z80_Flags_SetN( void ) ;
+void z80_Flags_ResetN( void ) ;
+bool z80_Flags_GetN( void ) ;
+
+void z80_Flags_SetPV( void ) ;
+void z80_Flags_ResetPV( void ) ;
+bool z80_Flags_GetPV( void ) ;
+void z80_Flags_CalculateParity( uint8_t val ) ;
+void z80_Flags_CalculateOverflow( int16_t val ) ;
+
+void z80_Flags_SetZero( void ) ;
+void z80_Flags_ResetZero( void ) ;
+bool z80_Flags_GetZero( void ) ;
+void z80_Flags_CalculateZero( uint8_t val ) ;
+
+void z80_Flags_SetSign( void ) ;
+void z80_Flags_ResetSign( void ) ;
+bool z80_Flags_GetSign( void ) ;
+void z80_Flags_CalculateSign( uint8_t val ) ;
+
+void z80_Flags_SetHalf( void ) ;
+void z80_Flags_ResetHalf( void ) ;
+bool z80_Flags_GetHalf( void ) ;
+void z80_Flags_CalculateHalf_sub( uint8_t a , uint8_t b ) ;
+void z80_Flags_CalculateHalf_add( uint8_t a , uint8_t b ) ;
+
+void z80_Flags_CalculateOverflowSub( uint8_t a , uint8_t b , uint8_t result ) ;
 
 #endif // Z80_REGISTERS_H

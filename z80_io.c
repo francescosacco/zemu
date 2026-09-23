@@ -20,17 +20,17 @@ void z80_io_initialization( void )
 uint8_t z80_io_getData( uint8_t io )
 {
     uint8_t ret ;
-    
+
     ret = z80_io[ io ].data ;
     z80_io[ io ].new = false ;
-    
+
     return( ret ) ;
 }
 
 void z80_io_setData( uint8_t io , uint8_t dataIn )
 {
     z80_io[ io ].data = dataIn ;
-    z80_io[ io ].new  = true ;    
+    z80_io[ io ].new  = true ;
 }
 
 bool z80_io_newData( uint8_t io )
