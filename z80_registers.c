@@ -1,5 +1,6 @@
 #include <z80_registers.h>
 #include <z80_memory.h>
+#include <z80_utils.h>
 
 static uint8_t z80_A ;
 
@@ -143,11 +144,7 @@ void z80_Regs_SetDReg( eSelectDoubleReg_t eReg , uint16_t value )
 
 uint16_t z80_Regs_GetPC( void )
 {
-    uint16_t tmp16 ;
-
-    tmp16 = z80_PC ;
-
-    return( tmp16 ) ;
+    return( z80_PC ) ;
 }
 
 uint16_t z80_Regs_GetAndIncPC( void )

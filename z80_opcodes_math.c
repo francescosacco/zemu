@@ -113,7 +113,7 @@ void z80_opcode_IncDecReg( uint8_t opCode )
     oldVal = z80_Regs_GetReg( eReg ) ;
     
     // Check opCode DEC or INC.
-    if( opCode & 0x01 )
+    if( GETBIT( opCode , 0 ) )
     {
         // Implementation for DEC.
         z80_verbose_addMnemonic( "DEC" ) ;
@@ -151,7 +151,7 @@ void z80_opcode_IncDecReg( uint8_t opCode )
     // No change.
 
     // Check opCode DEC or INC.
-    if( opCode & 0x01 )
+    if( GETBIT( opCode , 0 ) )
     {
         // Implementation for DEC.
 
@@ -480,7 +480,7 @@ void z80_opcode_SUB( uint8_t opCode )
     int8_t tmpA = ( int8_t ) z80_Regs_GetReg( eSelectReg_regA ) ;
 
     int16_t tmp16 = ( ( int16_t ) tmpA ) - ( ( int16_t ) tmp8 ) ;
-    if( opCode & 0x08 )
+    if( GETBIT( opCode , 3 ) )
     {
         tmp16 -= ( int16_t ) z80_Flags_GetCarry() ;
         z80_verbose_addMnemonic( "SBC" ) ;
@@ -489,8 +489,10 @@ void z80_opcode_SUB( uint8_t opCode )
     {
         z80_verbose_addMnemonic( "SUB" ) ;
     }
+    
+    uint8_t result = ( uint8_t ) tmp16 ;
 
-    z80_Regs_SetReg( eSelectReg_regA , (uint8_t)tmp16) ;
+    z80_Regs_SetReg( eSelectReg_regA , result ) ;
 
     /**********
      * FLAGS.
@@ -515,10 +517,10 @@ void z80_opcode_SUB( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
+    z80_Flags_CalculateZero( result ) ;
 
     // --- Sign Flag ---------
-    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
+    z80_Flags_CalculateSign( result ) ;
 
     z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
     z80_verbose_addOperatorRegister( eReg            , DIRECT ) ;
@@ -544,8 +546,9 @@ void z80_opcode_SUBConst( uint8_t opCode )
     z80_verbose_addOperatorByte( ( uint8_t ) tmp8 , DIRECT ) ;
 
     int16_t tmp16 = ( ( int16_t ) tmpA ) - ( ( int16_t ) tmp8 ) ;
+    uint8_t result = ( uint8_t ) tmp16 ;
 
-    z80_Regs_SetReg( eSelectReg_regA , (uint8_t)tmp16) ;
+    z80_Regs_SetReg( eSelectReg_regA , result ) ;
 
     /**********
      * FLAGS.
@@ -570,8 +573,8 @@ void z80_opcode_SUBConst( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
+    z80_Flags_CalculateZero( result ) ;
 
     // --- Sign Flag ---------
-    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
+    z80_Flags_CalculateSign( result ) ;
 }
