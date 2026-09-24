@@ -1,6 +1,7 @@
 #include "z80_opcodes_math.h"
 #include "z80_registers.h"
 #include "z80_memory.h"
+#include "z80_utils.h"
 
 #include "z80_verbose.h"
 
@@ -16,13 +17,19 @@ void z80_opcode_IncDecDReg( uint8_t opCode )
      *          2Bh - DEC HL
      *          3Bh - DEC SP
      * Size   - 1 Byte
+     *
+     *     7     6     5     4     3     2     1     0
+     *  +-----+-----+-----+-----+-----+-----+-----+-----+
+     *  |  0  |  0  |    REG    | I/D |  0  |  1  |  1  |
+     *  +-----+-----+-----+-----+-----+-----+-----+-----+
+     *
      **********/
     z80_verbose_addOpcode( opCode ) ;
 
     eSelectDoubleReg_t eReg = ( eSelectDoubleReg_t ) ( ( opCode >> 4 ) & 0x03 );
     uint16_t val = z80_Regs_GetDReg( eReg ) ;
 
-    if( opCode & 0x08 )
+    if( GETBIT( opCode , 3 ) )
     {
         val-- ;
         z80_verbose_addMnemonic( "DEC" ) ;
@@ -34,6 +41,35 @@ void z80_opcode_IncDecDReg( uint8_t opCode )
     }
 
     z80_Regs_SetDReg( eReg , val ) ;
+
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
+    // No change.
+
+    // --- Add/Sub -----------
+    // No change.
+
+    // --- Parity/OverFlow ---
+    // No change.
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    // No change.
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    // No change.
+
+    // --- Sign Flag ---------
+    // No change.
+
     z80_verbose_addOperatorDoubleRegister( eReg , DIRECT ) ;
 
     z80_verbose_addComment( "The final value is " ) ;
@@ -108,11 +144,52 @@ void z80_opcode_IncDecReg( uint8_t opCode )
     z80_Regs_SetReg( eReg , newVal ) ;
     
     /**********
-     * Update Flags.
+     * FLAGS.
      **********/
-    z80_Flags_CalculateSign( newVal ) ;
+
+    // --- Carry -------------
+    // No change.
+
+    // Check opCode DEC or INC.
+    if( opCode & 0x01 )
+    {
+        // Implementation for DEC.
+
+        // --- Add/Sub -----------
+        z80_Flags_SetN() ;
+
+        // --- Parity/OverFlow ---
+        z80_flags.pv = ( oldVal == 0x80 ) ;
+
+        // --- Half Carry Flag ---
+        z80_flags.h  = ( oldVal & 0x0F ) == 0x00 ;
+    }
+    else
+    {
+        // Implementation for INC.
+
+        // --- Add/Sub -----------
+        z80_Flags_ResetN() ;
+
+        // --- Parity/OverFlow ---
+        z80_flags.pv = ( oldVal == 0x7F ) ;
+
+        // --- Half Carry Flag ---
+        z80_flags.h  = ( ( oldVal & 0x0F ) + 1 ) > 0x0F ;
+    }
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
     z80_Flags_CalculateZero( newVal ) ;
-    // Carry flag is NOT affected by INC/DEC.
+
+    // --- Sign Flag ---------
+    z80_Flags_CalculateSign( newVal ) ;
+
 
     z80_verbose_addOperatorRegister( eReg , DIRECT ) ;
 
@@ -137,6 +214,20 @@ void z80_opcode_CP( uint8_t opCode )
      *          BFh - CP A
      * Size   - 1 Byte
      *
+     *    7   6   5   4   3   2   1   0
+     *  +---+---+---+---+---+---+---+---+
+     *  | 1 | 0 | 1 | 1 | 1 | x | x | x |
+     *  +---+---+---+---+---+---+---+---+
+     *                       \____ ____/
+     *                         000-B
+     *                         001-C
+     *                         010-D
+     *                         011-E
+     *                         100-H
+     *                         101-L
+     *                         110-(HL)
+     *                         111-A
+     *
      *          FEh - CP xx
      * Size   - 2 Bytes
      **********/
@@ -152,23 +243,6 @@ void z80_opcode_CP( uint8_t opCode )
     {
         eSelectReg_t eReg ;
 
-        /**********
-         * Memory Read!
-         *
-         *    7   6   5   4   3   2   1   0
-         *  +---+---+---+---+---+---+---+---+
-         *  | 1 | 0 | 1 | 1 | 1 | x | x | x |
-         *  +---+---+---+---+---+---+---+---+
-         *                       \____ ____/
-         *                         000-B
-         *                         001-C
-         *                         010-D
-         *                         011-E
-         *                         100-H
-         *                         101-L
-         *                         110-(HL)
-         *                         111-A
-         **********/
         eReg = ( eSelectReg_t ) ( opCode & 0x07 ) ; // Bits 2~0.
         tmp8 = z80_Regs_GetReg( eReg ) ;
 
@@ -182,13 +256,31 @@ void z80_opcode_CP( uint8_t opCode )
     result = regA - tmp8 ;
 
     /**********
-     * Update Flags.
+     * FLAGS.
      **********/
+
+    // --- Carry -------------
     z80_flags.c = ( regA < tmp8 ) ;
+
+    // --- Add/Sub -----------
     z80_Flags_SetN() ;
+
+    // --- Parity/OverFlow ---
     z80_Flags_CalculateOverflowSub( regA , tmp8 , result ) ;
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
     z80_Flags_CalculateHalf_sub( regA , tmp8 ) ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
     z80_Flags_CalculateZero( result ) ;
+
+    // --- Sign Flag ---------
     z80_Flags_CalculateSign( result ) ;
 }
 
@@ -212,11 +304,6 @@ void z80_opcode_ADD( uint8_t opCode )
      *          8Eh - ADC A,(HL)
      *          8Fh - ADC A,A
      * Size   - 1 Byte
-     **********/
-    z80_verbose_addOpcode( opCode ) ;
-
-    /**********
-     * Memory Read!
      *
      *    7   6   5   4   3   2   1   0
      *  +---+---+---+---+---+---+---+---+
@@ -232,6 +319,7 @@ void z80_opcode_ADD( uint8_t opCode )
      *                         110-(HL)
      *                         111-A
      **********/
+    z80_verbose_addOpcode( opCode ) ;
 
     eSelectReg_t eReg = ( eSelectReg_t ) ( opCode & 0x07 ) ;
     uint8_t tmp8 = z80_Regs_GetReg( eReg ) ;
@@ -241,7 +329,7 @@ void z80_opcode_ADD( uint8_t opCode )
     uint16_t result16 = ( ( uint16_t ) tmpA ) + ( ( uint16_t ) tmp8 ) ;
     uint8_t result8 ;
 
-    if( opCode & 0x08 )
+    if( GETBIT( opCode , 3 ) )
     {
         // Implementation for ADC.
         
@@ -264,13 +352,33 @@ void z80_opcode_ADD( uint8_t opCode )
     z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
     z80_verbose_addOperatorRegister( eReg            , DIRECT ) ;
 
-    // Update flags.
-    z80_Flags_CalculateHalf_adc( tmpA , tmp8 , tmpCarry ) ;
-    z80_Flags_CalculateOverflowAdc( tmpA , tmp8 , tmpCarry , result8 ) ;
-    z80_Flags_CalculateSign( result8 ) ;
-    z80_Flags_CalculateZero( result8 ) ;
-    z80_Flags_ResetN() ;
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
     z80_flags.c = ( ( result16 >> 8 ) != 0 ) ;
+
+    // --- Add/Sub -----------
+    z80_Flags_ResetN() ;
+
+    // --- Parity/OverFlow ---
+    z80_Flags_CalculateOverflowAdc( tmpA , tmp8 , tmpCarry , result8 ) ;
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    z80_Flags_CalculateHalf_adc( tmpA , tmp8 , tmpCarry ) ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    z80_Flags_CalculateZero( result8 ) ;
+
+    // --- Sign Flag ---------
+    z80_Flags_CalculateSign( result8 ) ;
 }
 
 void z80_opcode_ADDConst( uint8_t opCode )
@@ -297,12 +405,33 @@ void z80_opcode_ADDConst( uint8_t opCode )
 
     z80_Regs_SetReg( eSelectReg_regA , ( uint8_t ) tmp16 ) ;
 
-    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
-    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
-    z80_Flags_ResetN() ;
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
     z80_flags.c = ( tmp16 & 0xFF00 ) ? ( 1 ) : ( 0 ) ;
-    z80_Flags_CalculateHalf_adc( ( uint8_t ) tmpA , ( uint8_t ) tmp8 , false ) ;
+
+    // --- Add/Sub -----------
+    z80_Flags_ResetN() ;
+
+    // --- Parity/OverFlow ---
     z80_Flags_CalculateOverflow( tmp16 ) ;
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    z80_Flags_CalculateHalf_adc( ( uint8_t ) tmpA , ( uint8_t ) tmp8 , false ) ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
+
+    // --- Sign Flag ---------
+    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
 }
 
 void z80_opcode_SUB( uint8_t opCode )
@@ -363,15 +492,36 @@ void z80_opcode_SUB( uint8_t opCode )
 
     z80_Regs_SetReg( eSelectReg_regA , (uint8_t)tmp16) ;
 
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
+    z80_flags.c = ( tmp16 & 0xFF00 ) ? ( 1 ) : ( 0 ) ;
+
+    // --- Add/Sub -----------
+    z80_Flags_SetN() ;
+
+    // --- Parity/OverFlow ---
+    z80_Flags_CalculateOverflow( tmp16 ) ;
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    z80_Flags_CalculateHalf_sub( ( uint8_t ) tmpA , ( uint8_t ) tmp8 ) ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
+
+    // --- Sign Flag ---------
+    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
+
     z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
     z80_verbose_addOperatorRegister( eReg            , DIRECT ) ;
-
-    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
-    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
-    z80_Flags_SetN() ;
-    z80_flags.c = ( tmp16 & 0xFF00 ) ? ( 1 ) : ( 0 ) ;
-    z80_Flags_CalculateHalf_sub( ( uint8_t ) tmpA , ( uint8_t ) tmp8 ) ;
-    z80_Flags_CalculateOverflow( tmp16 ) ;
 }
 
 void z80_opcode_SUBConst( uint8_t opCode )
@@ -397,10 +547,31 @@ void z80_opcode_SUBConst( uint8_t opCode )
 
     z80_Regs_SetReg( eSelectReg_regA , (uint8_t)tmp16) ;
 
-    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
-    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
-    z80_Flags_SetN() ;
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
     z80_flags.c = ( tmp16 & 0xFF00 ) ? ( 1 ) : ( 0 ) ;
-    z80_Flags_CalculateHalf_sub( ( uint8_t ) tmpA , ( uint8_t ) tmp8 ) ;
+
+    // --- Add/Sub -----------
+    z80_Flags_SetN() ;
+
+    // --- Parity/OverFlow ---
     z80_Flags_CalculateOverflow( tmp16 ) ;
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    z80_Flags_CalculateHalf_sub( ( uint8_t ) tmpA , ( uint8_t ) tmp8 ) ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
+
+    // --- Sign Flag ---------
+    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
 }
