@@ -83,12 +83,10 @@ void z80_Flags_SetPV( void ) ;
 void z80_Flags_ResetPV( void ) ;
 bool z80_Flags_GetPV( void ) ;
 void z80_Flags_CalculateParity( uint8_t val ) ;
-void z80_Flags_CalculateOverflow( int16_t val ) ;
 
 void z80_Flags_SetZero( void ) ;
 void z80_Flags_ResetZero( void ) ;
 bool z80_Flags_GetZero( void ) ;
-void z80_Flags_CalculateZero( uint8_t val ) ;
 
 void z80_Flags_SetSign( void ) ;
 void z80_Flags_ResetSign( void ) ;

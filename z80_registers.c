@@ -258,18 +258,6 @@ void z80_Flags_CalculateParity( uint8_t val )
     z80_flags.pv = !( parity & 0x01 ) ;
 }
 
-void z80_Flags_CalculateOverflow( int16_t val )
-{
-    if( ( val > 127 ) || ( val < -128 ) )
-    {
-        z80_flags.pv = 1 ;
-    }
-    else
-    {
-        z80_flags.pv = 0 ;
-    }
-}
-
 void z80_Flags_CalculateOverflowSub( uint8_t a , uint8_t b , uint8_t result )
 {
     z80_flags.pv = ( ( ( a ^ b ) & ( a ^ result ) & 0x80 ) != 0 ) ;
@@ -296,18 +284,6 @@ void z80_Flags_ResetZero( void )
 bool z80_Flags_GetZero( void )
 {
     return( z80_flags.z == 1 ) ;
-}
-
-void z80_Flags_CalculateZero( uint8_t val )
-{
-    if( 0x00 == val )
-    {
-        z80_flags.z = 1 ;
-    }
-    else
-    {
-        z80_flags.z = 0 ;
-    }
 }
 
 void z80_Flags_SetSign( void )

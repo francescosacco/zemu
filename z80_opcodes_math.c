@@ -412,7 +412,7 @@ void z80_opcode_ADDConst( uint8_t opCode )
     z80_Flags_ResetN() ;
 
     // --- Parity/OverFlow ---
-    z80_Flags_CalculateOverflow( result16 ) ;
+    z80_Flags_CalculateOverflowAdc( regA , tmp8 , false , result8 ) ;
 
     // --- X3 ----------------
     // No change.
@@ -495,13 +495,13 @@ void z80_opcode_SUB( uint8_t opCode )
      **********/
 
     // --- Carry -------------
-    z80_flags.c = ( tmp16 > 0xFFu ) ;
+    z80_flags.c = ( tmpA < tmp8 ) ;
 
     // --- Add/Sub -----------
     z80_Flags_SetN() ;
 
     // --- Parity/OverFlow ---
-    z80_Flags_CalculateOverflow( tmp16 ) ;
+    z80_Flags_CalculateOverflowSub( tmpA , tmp8 , result ) ;
 
     // --- X3 ----------------
     // No change.
@@ -535,13 +535,13 @@ void z80_opcode_SUBConst( uint8_t opCode )
      * Memory Read!
      **********/
 
-    int8_t tmp8 = ( int8_t ) z80_memory[ z80_Regs_GetAndIncPC() ] ;
-    int8_t tmpA = ( int8_t ) z80_Regs_GetReg( eSelectReg_regA ) ;
+    uint8_t tmp8 = z80_memory[ z80_Regs_GetAndIncPC() ] ;
+    uint8_t tmpA = z80_Regs_GetReg( eSelectReg_regA ) ;
 
     z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
-    z80_verbose_addOperatorByte( ( uint8_t ) tmp8 , DIRECT ) ;
+    z80_verbose_addOperatorByte( tmp8 , DIRECT ) ;
 
-    int16_t tmp16 = ( ( int16_t ) tmpA ) - ( ( int16_t ) tmp8 ) ;
+    uint16_t tmp16 = ( ( uint16_t ) tmpA ) - ( ( uint16_t ) tmp8 ) ;
     uint8_t result = ( uint8_t ) tmp16 ;
 
     z80_Regs_SetReg( eSelectReg_regA , result ) ;
@@ -551,19 +551,19 @@ void z80_opcode_SUBConst( uint8_t opCode )
      **********/
 
     // --- Carry -------------
-    z80_flags.c = ( tmp16 > 0xFFu ) ;
+    z80_flags.c = ( tmpA < tmp8 ) ;
 
     // --- Add/Sub -----------
     z80_Flags_SetN() ;
 
     // --- Parity/OverFlow ---
-    z80_Flags_CalculateOverflow( tmp16 ) ;
+    z80_Flags_CalculateOverflowSub( tmpA , tmp8 , result ) ;
 
     // --- X3 ----------------
     // No change.
 
     // --- Half Carry Flag ---
-    z80_Flags_CalculateHalf_sub( ( uint8_t ) tmpA , ( uint8_t ) tmp8 ) ;
+    z80_Flags_CalculateHalf_sub( tmpA , tmp8 ) ;
 
     // --- X5 ----------------
     // No change.
