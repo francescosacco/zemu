@@ -16,22 +16,13 @@ void z80_opcode_Logic( uint8_t opCode )
      *
      *   7   6   5   4   3   2   1   0
      * +---+---+---+---+---+---+---+---+
-     * | 1 | 0 | 1 | x | x | x | x | x |
+     * | 1 | 0 | 1 | x | x |    Reg    |
      * +---+---+---+---+---+---+---+---+
-     *              \__ __/ \____ ____/
-     *               00-AND    000-B
-     *               01-XOR    001-C
-     *               10-OR     010-D
-     *                         011-E
-     *                         100-H
-     *                         101-L
-     *                         110-(HL)
-     *                         111-A
+     *              \__ __/
+     *               00-AND
+     *               01-XOR
+     *               10-OR
      *
-     * Flags -       SZ5H3PNC
-     *         AND   **513P00
-     *         XOR   **503P00
-     *         OR    **503P00
      **********/
     z80_verbose_addOpcode( opCode ) ;
 
@@ -82,13 +73,32 @@ void z80_opcode_Logic( uint8_t opCode )
     z80_verbose_addCommentByte( tmp ) ;
 
     /**********
-     * Update Flags.
+     * FLAGS.
      **********/
-    z80_Flags_CalculateSign( tmp ) ;
-    z80_Flags_CalculateZero( tmp ) ;
-    z80_Flags_CalculateParity( tmp ) ;
-    z80_Flags_ResetN() ;
+
+    // --- Carry -------------
     z80_Flags_ResetCarry() ;
+
+    // --- Add/Sub -----------
+    z80_Flags_ResetN() ;
+
+    // --- Parity/OverFlow ---
+    z80_Flags_CalculateParity( tmp ) ;
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    // No change.
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    z80_flags.z = ( tmp == 0x00 ) ;
+
+    // --- Sign Flag ---------
+    z80_Flags_CalculateSign( tmp ) ;
 }
 
 void z80_opcode_LogicConst( uint8_t opCode )
@@ -111,10 +121,6 @@ void z80_opcode_LogicConst( uint8_t opCode )
      *               01-XOR
      *               10-OR
      *
-     * Flags -       SZ5H3PNC
-     *         AND   **513P00
-     *         XOR   **503P00
-     *         OR    **503P00
      **********/
     z80_verbose_addOpcode( opCode ) ;
 
@@ -166,11 +172,30 @@ void z80_opcode_LogicConst( uint8_t opCode )
     z80_verbose_addCommentByte( tmpA ) ;
 
     /**********
-     * Update Flags.
+     * FLAGS.
      **********/
-    z80_Flags_CalculateSign( tmpA ) ;
-    z80_Flags_CalculateZero( tmpA ) ;
-    z80_Flags_CalculateParity( tmpA ) ;
-    z80_Flags_ResetN() ;
+
+    // --- Carry -------------
     z80_Flags_ResetCarry() ;
+
+    // --- Add/Sub -----------
+    z80_Flags_ResetN() ;
+
+    // --- Parity/OverFlow ---
+    z80_Flags_CalculateParity( tmpA ) ;
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    // No change.
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    z80_flags.z = ( tmpA = 0x00 ) ;
+
+    // --- Sign Flag ---------
+    z80_Flags_CalculateSign( tmpA ) ;
 }

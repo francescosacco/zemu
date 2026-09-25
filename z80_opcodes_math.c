@@ -20,7 +20,7 @@ void z80_opcode_IncDecDReg( uint8_t opCode )
      *
      *     7     6     5     4     3     2     1     0
      *  +-----+-----+-----+-----+-----+-----+-----+-----+
-     *  |  0  |  0  |    REG    | I/D |  0  |  1  |  1  |
+     *  |  0  |  0  |    Reg    | I/D |  0  |  1  |  1  |
      *  +-----+-----+-----+-----+-----+-----+-----+-----+
      *
      **********/
@@ -185,7 +185,7 @@ void z80_opcode_IncDecReg( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( newVal ) ;
+    z80_flags.z = ( newVal == 0 ) ;
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( newVal ) ;
@@ -216,17 +216,8 @@ void z80_opcode_CP( uint8_t opCode )
      *
      *    7   6   5   4   3   2   1   0
      *  +---+---+---+---+---+---+---+---+
-     *  | 1 | 0 | 1 | 1 | 1 | x | x | x |
+     *  | 1 | 0 | 1 | 1 | 1 |    Reg    |
      *  +---+---+---+---+---+---+---+---+
-     *                       \____ ____/
-     *                         000-B
-     *                         001-C
-     *                         010-D
-     *                         011-E
-     *                         100-H
-     *                         101-L
-     *                         110-(HL)
-     *                         111-A
      *
      *          FEh - CP xx
      * Size   - 2 Bytes
@@ -287,7 +278,7 @@ void z80_opcode_CP( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( result ) ;
+    z80_flags.z = ( result == 0 ) ;
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( result ) ;
@@ -316,17 +307,12 @@ void z80_opcode_ADD( uint8_t opCode )
      *
      *    7   6   5   4   3   2   1   0
      *  +---+---+---+---+---+---+---+---+
-     *  | 1 | 0 | 0 | 0 | C | x | x | x |
+     *  | 1 | 0 | 0 | 0 | C |    Reg    |
      *  +---+---+---+---+---+---+---+---+
-     *                   \ / \____ ____/
-     *                    |    000-B
-     *     1 - With C <---+    001-C
-     *                         010-D
-     *                         011-E
-     *                         100-H
-     *                         101-L
-     *                         110-(HL)
-     *                         111-A
+     *                   \ /
+     *                    |
+     *     1 - With C <---+
+     *
      **********/
     z80_verbose_addOpcode( opCode ) ;
 
@@ -384,7 +370,7 @@ void z80_opcode_ADD( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( result8 ) ;
+    z80_flags.z = ( result8 == 0x00 ) ;
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( result8 ) ;
@@ -420,7 +406,7 @@ void z80_opcode_ADDConst( uint8_t opCode )
      **********/
 
     // --- Carry -------------
-    z80_flags.c = ( result16 > 0xFF ) ;
+    z80_flags.c = ( result16 > 0xFFu ) ;
 
     // --- Add/Sub -----------
     z80_Flags_ResetN() ;
@@ -438,7 +424,7 @@ void z80_opcode_ADDConst( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( result8 ) ;
+    z80_flags.z = ( result8 == 0x00 ) ;
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( result8 ) ;
@@ -509,7 +495,7 @@ void z80_opcode_SUB( uint8_t opCode )
      **********/
 
     // --- Carry -------------
-    z80_flags.c = ( tmp16 & 0xFF00 ) ? ( 1 ) : ( 0 ) ;
+    z80_flags.c = ( tmp16 > 0xFFu ) ;
 
     // --- Add/Sub -----------
     z80_Flags_SetN() ;
@@ -527,7 +513,7 @@ void z80_opcode_SUB( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( result ) ;
+    z80_flags.z = ( result == 0x00 ) ;
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( result ) ;
@@ -565,7 +551,7 @@ void z80_opcode_SUBConst( uint8_t opCode )
      **********/
 
     // --- Carry -------------
-    z80_flags.c = ( tmp16 & 0xFF00 ) ? ( 1 ) : ( 0 ) ;
+    z80_flags.c = ( tmp16 > 0xFFu ) ;
 
     // --- Add/Sub -----------
     z80_Flags_SetN() ;
@@ -583,7 +569,7 @@ void z80_opcode_SUBConst( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( result ) ;
+    z80_flags.z = ( result == 0x00 ) ;
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( result ) ;
