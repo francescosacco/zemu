@@ -238,6 +238,8 @@ void z80_opcode_CP( uint8_t opCode )
     {
         tmp8 = z80_memory[ z80_Regs_GetAndIncPC() ] ;
         z80_verbose_addOperatorByte( tmp8 , DIRECT ) ;
+        
+        z80_verbose_addOpcode( tmp8 ) ;
     }
     else
     {
@@ -254,6 +256,13 @@ void z80_opcode_CP( uint8_t opCode )
      **********/
     regA = z80_Regs_GetReg( eSelectReg_regA ) ;
     result = regA - tmp8 ;
+
+    // Log information in verbose mode.
+    z80_verbose_addCommentByte( regA ) ;
+    z80_verbose_addComment( " - " ) ;
+    z80_verbose_addCommentByte( tmp8 ) ;
+    z80_verbose_addComment( " = " ) ;
+    z80_verbose_addCommentByte( result ) ;
 
     /**********
      * FLAGS.
@@ -357,7 +366,7 @@ void z80_opcode_ADD( uint8_t opCode )
      **********/
 
     // --- Carry -------------
-    z80_flags.c = ( ( result16 >> 8 ) != 0 ) ;
+    z80_flags.c = ( result16 > 0xFFu ) ;
 
     // --- Add/Sub -----------
     z80_Flags_ResetN() ;
@@ -394,44 +403,45 @@ void z80_opcode_ADDConst( uint8_t opCode )
      * Memory Read!
      **********/
 
-    int8_t tmp8 = ( int8_t ) z80_memory[ z80_Regs_GetAndIncPC() ] ;
-    int8_t tmpA = ( int8_t ) z80_Regs_GetReg( eSelectReg_regA ) ;
+    uint8_t tmp8 = z80_memory[ z80_Regs_GetAndIncPC() ] ;
+    uint8_t regA = z80_Regs_GetReg( eSelectReg_regA ) ;
 
-    z80_verbose_addOpcode( ( uint8_t ) tmp8 ) ;
+    z80_verbose_addOpcode( tmp8 ) ;
     z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
-    z80_verbose_addOperatorByte( ( uint8_t ) tmp8 , DIRECT ) ;
+    z80_verbose_addOperatorByte( tmp8 , DIRECT ) ;
 
-    int16_t tmp16 = ( ( int16_t ) tmpA ) + ( ( int16_t ) tmp8 ) ;
+    uint16_t result16 = ( ( uint16_t ) regA ) + ( ( uint16_t ) tmp8 ) ;
+    uint8_t result8 = ( uint8_t ) result16 ;
 
-    z80_Regs_SetReg( eSelectReg_regA , ( uint8_t ) tmp16 ) ;
+    z80_Regs_SetReg( eSelectReg_regA , result8 ) ;
 
     /**********
      * FLAGS.
      **********/
 
     // --- Carry -------------
-    z80_flags.c = ( tmp16 & 0xFF00 ) ? ( 1 ) : ( 0 ) ;
+    z80_flags.c = ( result16 > 0xFF ) ;
 
     // --- Add/Sub -----------
     z80_Flags_ResetN() ;
 
     // --- Parity/OverFlow ---
-    z80_Flags_CalculateOverflow( tmp16 ) ;
+    z80_Flags_CalculateOverflow( result16 ) ;
 
     // --- X3 ----------------
     // No change.
 
     // --- Half Carry Flag ---
-    z80_Flags_CalculateHalf_adc( ( uint8_t ) tmpA , ( uint8_t ) tmp8 , false ) ;
+    z80_Flags_CalculateHalf_adc( regA , tmp8 , false ) ;
 
     // --- X5 ----------------
     // No change.
 
     // --- Zero Flag ---------
-    z80_Flags_CalculateZero( ( uint8_t ) tmp16 ) ;
+    z80_Flags_CalculateZero( result8 ) ;
 
     // --- Sign Flag ---------
-    z80_Flags_CalculateSign( ( uint8_t ) tmp16 ) ;
+    z80_Flags_CalculateSign( result8 ) ;
 }
 
 void z80_opcode_SUB( uint8_t opCode )

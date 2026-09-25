@@ -252,6 +252,9 @@ void z80_opcode_LoadMemHL( uint8_t opCode )
      * Size   - 3 Byte
      **********/
     z80_verbose_addOpcode( opCode ) ;
+    z80_verbose_addOpcode( addr & 0x00FF ) ;
+    z80_verbose_addOpcode( addr >> 8 ) ;
+
     z80_verbose_addMnemonic( "LD" ) ;
 
     if( opCode & 0x08 ) // Bit 3, LD HL,(xxxx)
