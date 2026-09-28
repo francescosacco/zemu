@@ -194,7 +194,7 @@ void z80_opcode_LogicConst( uint8_t opCode )
     // No change.
 
     // --- Zero Flag ---------
-    z80_flags.z = ( tmpA = 0x00 ) ;
+    z80_flags.z = ( tmpA == 0x00 ) ;
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( tmpA ) ;

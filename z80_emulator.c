@@ -255,7 +255,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_OUT         , // D3 - 2 Bytes - OUT (xx),A
     z80_opcode_CALL        , // D4 - 3 Bytes - CALL NC,xxxx
     z80_opcode_PUSH        , // D5 - 1 Byte  - PUSH DE
-    z80_opcode_SUBConst    , // D6 - 2 Bytes - SUB A,xx
+    z80_opcode_SUB         , // D6 - 2 Bytes - SUB A,xx
     z80_opcode_RST         , // D7 - 1 Byte  - RST 10h
     z80_opcode_RET         , // D8 - 1 Byte  - RET Z
     z80_opcode_CRASH       , // D9 - Crash
@@ -263,7 +263,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_IN          , // DB - 2 Bytes - IN A,(xx)
     z80_opcode_CALL        , // DC - 3 Bytes - CALL C,xxxx
     z80_opcode_Extended_IX , // DD - Extended IX
-    z80_opcode_CRASH       , // DE - Crash
+    z80_opcode_SUB         , // DE - 2 Bytes - SBC A,xx
     z80_opcode_RST         , // DF - 1 Byte  - RST 18h
 
     z80_opcode_RET           , // E0 - 1 Byte  - RET NPV

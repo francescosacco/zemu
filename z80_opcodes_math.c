@@ -449,36 +449,54 @@ void z80_opcode_SUB( uint8_t opCode )
      *          9Dh - SBC A,L
      *          9Eh - SBC A,(HL)
      *          9Fh - SBC A,A
+     *
      * Size   - 1 Byte
-     **********/
-    z80_verbose_addOpcode( opCode ) ;
-
-    /**********
-     * Memory Read!
+     *
+     * Opcode - D6h - SUB A,xx
+     *          DEh - SBC A,xx
+     *
+     * Size   - 2 Byte
      *
      *    7   6   5   4   3   2   1   0
      *  +---+---+---+---+---+---+---+---+
-     *  | 1 | 0 | 0 | 1 | C | x | x | x |
+     *  | 1 |R/C| 0 | 1 | C |    Reg    |
      *  +---+---+---+---+---+---+---+---+
-     *                   \ / \____ ____/
-     *                    |    000-B
-     *     1 - With C <---+    001-C
-     *                         010-D
-     *                         011-E
-     *                         100-H
-     *                         101-L
-     *                         110-(HL)
-     *                         111-A
+     *       \ /         \ /
+     *        |           |
+     *        |           +---> 1 - With C
+     *        +---------------> 1 - Const / 0 - Reg
+     *
      **********/
+    z80_verbose_addOpcode( opCode ) ;
 
-    eSelectReg_t eReg = ( eSelectReg_t ) ( opCode & 0x07 ) ;
-    int8_t tmp8 = ( int8_t ) z80_Regs_GetReg( eReg ) ;
-    int8_t tmpA = ( int8_t ) z80_Regs_GetReg( eSelectReg_regA ) ;
+    uint8_t tmpA = z80_Regs_GetReg( eSelectReg_regA ) ;
+    uint8_t tmp8 = 0x00 ;
 
-    int16_t tmp16 = ( ( int16_t ) tmpA ) - ( ( int16_t ) tmp8 ) ;
+    if( GETBIT( opCode , 6 ) )
+    {
+        tmp8 = z80_memory[ z80_Regs_GetAndIncPC() ] ;
+    }
+    else
+    {
+        eSelectReg_t eReg = ( eSelectReg_t ) ( opCode & 0x07 ) ;
+        tmp8 = z80_Regs_GetReg( eReg ) ;
+    }
+
+    // Add values to the comments:
+    z80_verbose_addCommentByte( tmpA ) ;
+    z80_verbose_addComment( " - " ) ;
+    z80_verbose_addCommentByte( tmp8 ) ;
     if( GETBIT( opCode , 3 ) )
     {
-        tmp16 -= ( int16_t ) z80_Flags_GetCarry() ;
+        uint8_t carry = ( uint8_t ) z80_Flags_GetCarry() ;
+        z80_verbose_addComment( " - " ) ;
+        z80_verbose_addCommentByte( carry ) ;
+    }
+    z80_verbose_addComment( " = " ) ;
+
+    if( GETBIT( opCode , 3 ) )
+    {
+        tmp8 += ( uint8_t ) z80_Flags_GetCarry() ;
         z80_verbose_addMnemonic( "SBC" ) ;
     }
     else
@@ -486,63 +504,8 @@ void z80_opcode_SUB( uint8_t opCode )
         z80_verbose_addMnemonic( "SUB" ) ;
     }
     
-    uint8_t result = ( uint8_t ) tmp16 ;
-
-    z80_Regs_SetReg( eSelectReg_regA , result ) ;
-
-    /**********
-     * FLAGS.
-     **********/
-
-    // --- Carry -------------
-    z80_flags.c = ( tmpA < tmp8 ) ;
-
-    // --- Add/Sub -----------
-    z80_Flags_SetN() ;
-
-    // --- Parity/OverFlow ---
-    z80_Flags_CalculateOverflowSub( tmpA , tmp8 , result ) ;
-
-    // --- X3 ----------------
-    // No change.
-
-    // --- Half Carry Flag ---
-    z80_Flags_CalculateHalf_sub( ( uint8_t ) tmpA , ( uint8_t ) tmp8 ) ;
-
-    // --- X5 ----------------
-    // No change.
-
-    // --- Zero Flag ---------
-    z80_flags.z = ( result == 0x00 ) ;
-
-    // --- Sign Flag ---------
-    z80_Flags_CalculateSign( result ) ;
-
-    z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
-    z80_verbose_addOperatorRegister( eReg            , DIRECT ) ;
-}
-
-void z80_opcode_SUBConst( uint8_t opCode )
-{
-    /**********
-     * Opcode - D6h - SUB A,xx
-     * Size   - 2 Byte
-     **********/
-    z80_verbose_addOpcode( opCode ) ;
-    z80_verbose_addMnemonic( "SUB" ) ;
-
-    /**********
-     * Memory Read!
-     **********/
-
-    uint8_t tmp8 = z80_memory[ z80_Regs_GetAndIncPC() ] ;
-    uint8_t tmpA = z80_Regs_GetReg( eSelectReg_regA ) ;
-
-    z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
-    z80_verbose_addOperatorByte( tmp8 , DIRECT ) ;
-
-    uint16_t tmp16 = ( ( uint16_t ) tmpA ) - ( ( uint16_t ) tmp8 ) ;
-    uint8_t result = ( uint8_t ) tmp16 ;
+    uint8_t result = tmpA - tmp8 ;
+    z80_verbose_addCommentByte( result ) ;    
 
     z80_Regs_SetReg( eSelectReg_regA , result ) ;
 
@@ -573,4 +536,16 @@ void z80_opcode_SUBConst( uint8_t opCode )
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( result ) ;
+
+    z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
+
+    if( GETBIT( opCode , 6 ) )
+    {
+        z80_verbose_addOperator( "XX" , false ) ;
+    }
+    else
+    {
+        eSelectReg_t eReg = ( eSelectReg_t ) ( opCode & 0x07 ) ;
+        z80_verbose_addOperatorRegister( eReg            , DIRECT ) ;
+    }
 }
