@@ -238,7 +238,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_JUMP          , // C3 - 3 Bytes - JP xxxx
     z80_opcode_CALL          , // C4 - 3 Bytes - CALL NZ,xxxx
     z80_opcode_PUSH          , // C5 - 1 Byte  - PUSH BC
-    z80_opcode_ADDConst      , // C6 - 2 Bytes - ADD A,xx
+    z80_opcode_ADD           , // C6 - 2 Bytes - ADD A,xx
     z80_opcode_RST           , // C7 - 1 Byte  - RST 00h
     z80_opcode_RET           , // C8 - 1 Byte  - RET Z
     z80_opcode_RET           , // C9 - 1 Byte  - RET
@@ -246,7 +246,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_Extended_Bits , // CB - Extended
     z80_opcode_CALL          , // CC - 3 Bytes - CALL Z,xxxx
     z80_opcode_CALL          , // CD - 3 Bytes - CALL xxxx
-    z80_opcode_CRASH         , // CE - Crash
+    z80_opcode_ADD           , // CE - 2 Bytes - ADC A,xx
     z80_opcode_RST           , // CF - 1 Byte  - RST 08h
 
     z80_opcode_RET         , // D0 - 1 Byte  - RET NC
