@@ -338,3 +338,62 @@ void z80_Flags_CalculateHalf_adc( uint8_t a , uint8_t b , bool c )
     uint8_t carry = ( c ) ? ( 0x01 ) : ( 0x00 ) ;
     z80_flags.h = ( ( a & 0x0F ) + ( b & 0x0F ) + carry ) > 0x0F ;
 }
+
+uint8_t z80_Flags_GetF( void )
+{
+    uint8_t flags = 0x00 ;
+
+    if( z80_flags.c )
+    {
+        flags |= 0x01 ;
+    }
+
+    if( z80_flags.n )
+    {
+        flags |= 0x02 ;
+    }
+
+    if( z80_flags.pv )
+    {
+        flags |= 0x04 ;
+    }
+
+    if( z80_flags.x3 )
+    {
+        flags |= 0x08 ;
+    }
+
+    if( z80_flags.h )
+    {
+        flags |= 0x10 ;
+    }
+
+    if( z80_flags.x5 )
+    {
+        flags |= 0x20 ;
+    }
+
+    if( z80_flags.z )
+    {
+        flags |= 0x40 ;
+    }
+
+    if( z80_flags.s )
+    {
+        flags |= 0x80 ;
+    }
+
+    return( flags ) ;
+}
+
+void z80_Flags_SetF( uint8_t flags )
+{
+    z80_flags.c  = ( flags & 0x01 ) != 0x00 ;
+    z80_flags.n  = ( flags & 0x02 ) != 0x00 ;
+    z80_flags.pv = ( flags & 0x04 ) != 0x00 ;
+    z80_flags.x3 = ( flags & 0x08 ) != 0x00 ;
+    z80_flags.h  = ( flags & 0x10 ) != 0x00 ;
+    z80_flags.x5 = ( flags & 0x20 ) != 0x00 ;
+    z80_flags.z  = ( flags & 0x40 ) != 0x00 ;
+    z80_flags.s  = ( flags & 0x80 ) != 0x00 ;    
+}

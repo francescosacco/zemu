@@ -41,18 +41,24 @@ void z80_opcode_Logic( uint8_t opCode )
     {
         case 0x00 : // AND
             tmp &= z80_Regs_GetReg( eReg ) ;
+
+            // --- Half Carry Flag ---
             z80_Flags_SetHalf() ;
 
             z80_verbose_addMnemonic( "AND" ) ;
             break ;
         case 0x01 : // XOR
             tmp ^= z80_Regs_GetReg( eReg ) ;
+
+            // --- Half Carry Flag ---
             z80_Flags_ResetHalf() ;
 
             z80_verbose_addMnemonic( "XOR" ) ;
             break ;
         case 0x02 : // OR
             tmp |= z80_Regs_GetReg( eReg ) ;
+
+            // --- Half Carry Flag ---
             z80_Flags_ResetHalf() ;
 
             z80_verbose_addMnemonic( "OR" ) ;
@@ -86,9 +92,6 @@ void z80_opcode_Logic( uint8_t opCode )
     z80_Flags_CalculateParity( tmp ) ;
 
     // --- X3 ----------------
-    // No change.
-
-    // --- Half Carry Flag ---
     // No change.
 
     // --- X5 ----------------
@@ -140,18 +143,24 @@ void z80_opcode_LogicConst( uint8_t opCode )
     {
         case 0x00 : // AND
             tmpA &= tmp8 ;
+
+            // --- Half Carry Flag ---
             z80_Flags_SetHalf() ;
 
             z80_verbose_addMnemonic( "AND" ) ;
             break ;
         case 0x01 : // XOR
             tmpA ^= tmp8 ;
+
+            // --- Half Carry Flag ---
             z80_Flags_ResetHalf() ;
 
             z80_verbose_addMnemonic( "XOR" ) ;
             break ;
         case 0x02 : // OR
             tmpA |= tmp8 ;
+
+            // --- Half Carry Flag ---
             z80_Flags_ResetHalf() ;
 
             z80_verbose_addMnemonic( "OR" ) ;
@@ -185,9 +194,6 @@ void z80_opcode_LogicConst( uint8_t opCode )
     z80_Flags_CalculateParity( tmpA ) ;
 
     // --- X3 ----------------
-    // No change.
-
-    // --- Half Carry Flag ---
     // No change.
 
     // --- X5 ----------------

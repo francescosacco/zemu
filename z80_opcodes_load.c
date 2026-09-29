@@ -308,26 +308,26 @@ void z80_opcode_PUSH( uint8_t opCode )
     switch( opCode )
     {
         case 0xC5: // PUSH BC
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( eSelectReg_regB ) ;
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( eSelectReg_regC ) ;
+            z80_memory[ --z80_SP ] = z80_Regs_GetReg( eSelectReg_regB ) ;
+            z80_memory[ --z80_SP ] = z80_Regs_GetReg( eSelectReg_regC ) ;
 
             z80_verbose_addOperatorDoubleRegister( eSelectReg_regBC , DIRECT ) ;
             break ;
         case 0xD5: // PUSH DE
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( eSelectReg_regD ) ;
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( eSelectReg_regE ) ;
+            z80_memory[ --z80_SP ] = z80_Regs_GetReg( eSelectReg_regD ) ;
+            z80_memory[ --z80_SP ] = z80_Regs_GetReg( eSelectReg_regE ) ;
 
             z80_verbose_addOperatorDoubleRegister( eSelectReg_regDE , DIRECT ) ;
             break ;
         case 0xE5: // PUSH HL
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( eSelectReg_regH ) ;
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( eSelectReg_regL ) ;
+            z80_memory[ --z80_SP ] = z80_Regs_GetReg( eSelectReg_regH ) ;
+            z80_memory[ --z80_SP ] = z80_Regs_GetReg( eSelectReg_regL ) ;
 
             z80_verbose_addOperatorDoubleRegister( eSelectReg_regHL , DIRECT ) ;
             break ;
         case 0xF5: // PUSH AF
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( eSelectReg_regA ) ;
-            z80_memory[ --z80_SP ] = *( ( uint8_t * ) &z80_flags ) ;
+            z80_memory[ --z80_SP ] = z80_Regs_GetReg( eSelectReg_regA ) ;
+            z80_memory[ --z80_SP ] = z80_Flags_GetF() ;
 
             z80_verbose_addOperator( "AF" , DIRECT ) ;
             break ;
@@ -370,7 +370,7 @@ void z80_opcode_POP( uint8_t opCode )
             z80_verbose_addOperatorDoubleRegister( eSelectReg_regHL , DIRECT ) ;
             break ;
         case 0xF1: // POP AF
-            *( ( uint8_t * ) &z80_flags ) = z80_memory[ z80_SP++ ] ;
+            z80_Flags_SetF( z80_memory[ z80_SP++ ] ) ;
             z80_Regs_SetReg( eSelectReg_regA , z80_memory[ z80_SP++ ] ) ;
 
             z80_verbose_addOperator( "AF" , DIRECT ) ;

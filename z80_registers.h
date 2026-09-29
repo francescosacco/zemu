@@ -93,6 +93,9 @@ void z80_Flags_ResetSign( void ) ;
 bool z80_Flags_GetSign( void ) ;
 void z80_Flags_CalculateSign( uint8_t val ) ;
 
+uint8_t z80_Flags_GetF( void ) ;
+void z80_Flags_SetF( uint8_t flags ) ;
+
 void z80_Flags_SetHalf( void ) ;
 void z80_Flags_ResetHalf( void ) ;
 bool z80_Flags_GetHalf( void ) ;
