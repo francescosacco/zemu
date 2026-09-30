@@ -84,8 +84,8 @@ int main( int argc , char * argv[] )
 
         if( setVerbose )
         {
-            // In verbose mode, add a 10ms delay.
-            usleep( 10000 ) ;
+            // In verbose mode, add a 20ms delay.
+            usleep( 20000 ) ;
         }
     }
 

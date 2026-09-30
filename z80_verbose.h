@@ -15,6 +15,7 @@ void z80_verbose_print( void ) ;
 void z80_verbose_addAddr( uint16_t addr ) ;
 void z80_verbose_addOpcode( uint8_t opCode ) ;
 void z80_verbose_addMnemonic( char * mnemonic ) ;
+void z80_verbose_addFlags( uint8_t flags ) ;
 
 void z80_verbose_addOperator( char * operator , bool indirect ) ;
 void z80_verbose_addOperatorByte( uint8_t operator , bool indirect ) ;

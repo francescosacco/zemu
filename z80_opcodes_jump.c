@@ -303,9 +303,8 @@ void z80_opcode_CALL( uint8_t opCode )
 
 void z80_opcode_RET( uint8_t opCode )
 {
-    uint16_t addr ;
-
-    bool shouldJump    = false ;
+    uint16_t addr = 0x0000 ;
+    bool shouldJump = false ;
 
     /**********
      * Opcode - C0h - RET NZ,xxxx
@@ -392,8 +391,6 @@ void z80_opcode_RET( uint8_t opCode )
         }
     }
 
-    z80_verbose_addOperatorWord( addr , DIRECT ) ;
-
     /**********
      * Memory Write!
      **********/
@@ -410,6 +407,8 @@ void z80_opcode_RET( uint8_t opCode )
     {
         z80_verbose_addComment( "It didn't jump." ) ;
     }
+
+    z80_verbose_addOperatorWord( addr , DIRECT ) ;
 }
 
 void z80_opcode_RST( uint8_t opCode )

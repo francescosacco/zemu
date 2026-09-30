@@ -193,6 +193,8 @@ void z80_opcode_IncDecReg( uint8_t opCode )
 
     z80_verbose_addOperatorRegister( eReg , DIRECT ) ;
 
+    z80_verbose_addFlags( z80_Flags_GetF() ) ;
+
     z80_verbose_addComment( "The final value is " ) ;
     z80_verbose_addCommentNumeric( ( int ) newVal ) ;
 }
@@ -282,6 +284,8 @@ void z80_opcode_CP( uint8_t opCode )
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( result ) ;
+
+    z80_verbose_addFlags( z80_Flags_GetF() ) ;
 }
 
 void z80_opcode_ADD( uint8_t opCode )

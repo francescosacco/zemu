@@ -15,10 +15,12 @@ static struct
 
     char mnemonic[ 8 ] ;
     char operators[ 16 ] ;
+    uint8_t flags ;
     char comment[ 32 ] ;
 
     bool operatorEmpty ;
     bool commentEmpty ;
+    bool flagsEmpty ;
 } z80_verbose_instruction ;
 
 char * z80_verbose_returnRegName( eSelectReg_t eReg ) ;
@@ -36,6 +38,7 @@ void z80_verbose_clear( void )
     z80_verbose_instruction.opCodeCount = 0 ;
     z80_verbose_instruction.operatorEmpty = true ;
     z80_verbose_instruction.commentEmpty  = true ;
+    z80_verbose_instruction.flagsEmpty    = true ;
 
     memset( z80_verbose_instruction.mnemonic  , '\0' , sizeof( z80_verbose_instruction.mnemonic  ) ) ;
     memset( z80_verbose_instruction.operators , '\0' , sizeof( z80_verbose_instruction.operators ) ) ;
@@ -58,6 +61,12 @@ void z80_verbose_addOpcode( uint8_t opCode )
 void z80_verbose_addMnemonic( char * mnemonic )
 {
     strncpy( z80_verbose_instruction.mnemonic , mnemonic , sizeof( z80_verbose_instruction.mnemonic ) - 1 ) ;
+}
+
+void z80_verbose_addFlags( uint8_t flags )
+{
+    z80_verbose_instruction.flags = flags ;
+    z80_verbose_instruction.flagsEmpty = false ;    
 }
 
 void z80_verbose_addOperator( char * operator , bool indirect )
@@ -185,8 +194,26 @@ void z80_verbose_print( void )
         printf( " " ) ;
     }
 
+    // Print flags.
+    if( z80_verbose_instruction.flagsEmpty == false )
+    {
+        printf( " " ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x01 ) ? 'C' : '-' ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x02 ) ? 'N' : '-' ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x04 ) ? 'O' : '-' ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x08 ) ? '3' : '-' ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x10 ) ? 'H' : '-' ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x20 ) ? '5' : '-' ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x40 ) ? 'Z' : '-' ) ;
+        printf( "%c" , ( z80_verbose_instruction.flags & 0x80 ) ? 'S' : '-' ) ;
+        printf( " " ) ;
+    }
+    else
+    {
+        printf( "          " ) ;
+    }
+    
     // Print the comments.
-
     if( z80_verbose_instruction.commentEmpty == false )
     {
         printf( " ; " ) ;

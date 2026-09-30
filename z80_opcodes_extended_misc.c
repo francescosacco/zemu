@@ -67,6 +67,10 @@ void z80_opcode_Extended_Misc( uint8_t opCode )
             tmp16 |= ( ( uint16_t ) z80_memory[ z80_SP++ ] ) << 8 ; // MSB
 
             z80_Regs_SetPC( tmp16 ) ;
+            
+            z80_verbose_addComment( "ADDR: " ) ;
+            z80_verbose_addCommentWord( tmp16 ) ;
+            
             break ;
 
         default:
