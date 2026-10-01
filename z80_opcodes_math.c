@@ -506,6 +506,8 @@ void z80_opcode_SUB( uint8_t opCode )
 
     z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
 
+    z80_verbose_addFlags( z80_Flags_GetF() ) ;
+
     if( GETBIT( opCode , 6 ) )
     {
         z80_verbose_addOperator( "XX" , false ) ;

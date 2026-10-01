@@ -95,6 +95,9 @@ void z80_opcode_IN( uint8_t opCode )
 
     // Read Accumulator.
     z80_Regs_SetReg( eSelectReg_regA , tmp ) ;
+
+    z80_verbose_addComment( "Data input is " ) ;
+    z80_verbose_addCommentByte( tmp ) ;
 }
 
 void z80_opcode_NOP( uint8_t opCode )

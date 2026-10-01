@@ -102,6 +102,8 @@ void z80_opcode_Logic( uint8_t opCode )
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( tmp ) ;
+    
+    z80_verbose_addFlags( z80_Flags_GetF() ) ;
 }
 
 void z80_opcode_LogicConst( uint8_t opCode )
@@ -204,4 +206,6 @@ void z80_opcode_LogicConst( uint8_t opCode )
 
     // --- Sign Flag ---------
     z80_Flags_CalculateSign( tmpA ) ;
+    
+    z80_verbose_addFlags( z80_Flags_GetF() ) ;
 }

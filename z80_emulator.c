@@ -315,6 +315,8 @@ void z80_interrupt( void )
         return ;
     }
 
+    printf( "[ ===== Interrupt! ===== ]\n" ) ;
+
     switch( z80_Regs_GetIM() )
     {
         case eInterruptMode_0:

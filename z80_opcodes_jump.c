@@ -97,6 +97,8 @@ void z80_opcode_JUMP( uint8_t opCode )
         }
 
         z80_verbose_addOperatorWord( addr , DIRECT ) ;
+
+        z80_verbose_addFlags( z80_Flags_GetF() ) ;
     }
 
     /**********
@@ -166,6 +168,7 @@ void z80_opcode_JR( uint8_t opCode )
                 break ;
         }
 
+        z80_verbose_addFlags( z80_Flags_GetF() ) ;
     }
 
     z80_verbose_addOperatorByte( ( uint8_t ) tmp , DIRECT ) ;
@@ -279,6 +282,8 @@ void z80_opcode_CALL( uint8_t opCode )
                 z80_verbose_addOperator( "S" , DIRECT ) ;
                 break ;
         }
+
+        z80_verbose_addFlags( z80_Flags_GetF() ) ;
     }
 
     z80_verbose_addOperatorWord( addr , DIRECT ) ;
@@ -389,6 +394,8 @@ void z80_opcode_RET( uint8_t opCode )
                 z80_verbose_addOperator( "S" , DIRECT ) ;
                 break ;
         }
+
+        z80_verbose_addFlags( z80_Flags_GetF() ) ;
     }
 
     /**********

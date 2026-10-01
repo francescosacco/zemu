@@ -94,7 +94,8 @@ void z80_opcode_LoadRegReg( uint8_t opCode )
 void z80_opcode_LoadDRegC( uint8_t opCode )
 {
     eSelectDoubleReg_t eReg ;
-    uint16_t tmp ;
+    uint16_t tmp16 ;
+    uint8_t tmp8 ;
 
     /**********
      * Opcode - 01h - LD BC,xxxx
@@ -102,27 +103,44 @@ void z80_opcode_LoadDRegC( uint8_t opCode )
      *          21h - LD HL,xxxx
      *          31h - LD SP,xxxx
      * Size   - 3 Byte
+     *
+     *   7   6   5   4   3   2   1   0
+     * +---+---+---+---+---+---+---+---+
+     * | 0 | 0 | x | x | 0 | 0 | 0 | 1 |
+     * +---+---+---+---+---+---+---+---+
+     *          \__ __/
+     *           00 - BC
+     *           01 - DE
+     *           10 - HL
+     *           11 - SP
      **********/
-    z80_verbose_addOpcode( opCode ) ;
     z80_verbose_addMnemonic( "LD" ) ;
+    z80_verbose_addOpcode( opCode ) ;
 
     /**********
      * Memory Read!
      **********/
-    tmp  =   ( uint16_t ) z80_memory[ z80_Regs_GetAndIncPC() ] ;
-    tmp |= ( ( uint16_t ) z80_memory[ z80_Regs_GetAndIncPC() ] ) << 8 ;
+    tmp8 = z80_memory[ z80_Regs_GetAndIncPC() ] ;
+    tmp16  =   ( uint16_t ) tmp8 ;
+    z80_verbose_addOpcode( tmp8 ) ;
+
+
+    tmp8 = z80_memory[ z80_Regs_GetAndIncPC() ] ;
+    tmp16 |= ( ( uint16_t ) tmp8 ) << 8 ;
+    z80_verbose_addOpcode( tmp8 ) ;
 
     /**********
      * Execute!
      **********/
     eReg = ( eSelectDoubleReg_t ) ( ( opCode >> 4 ) & 0x03 ) ;
+
     z80_verbose_addOperatorDoubleRegister( eReg , DIRECT ) ;
-    z80_verbose_addOperatorWord( tmp , DIRECT ) ;
+    z80_verbose_addOperatorWord( tmp16 , DIRECT ) ;
 
     /**********
      * Memory Write!
      **********/
-    z80_Regs_SetDReg( eReg , tmp ) ;
+    z80_Regs_SetDReg( eReg , tmp16 ) ;
 }
 
 void z80_opcode_LoadAInd( uint8_t opCode )
@@ -262,7 +280,7 @@ void z80_opcode_LoadMemHL( uint8_t opCode )
         z80_Regs_SetReg( eSelectReg_regL , z80_memory[ addr     ] ) ;
         z80_Regs_SetReg( eSelectReg_regH , z80_memory[ addr + 1 ] ) ;
 
-        z80_verbose_addOperatorRegister( eSelectReg_regHL , DIRECT ) ;
+        z80_verbose_addOperatorDoubleRegister( eSelectReg_regHL , DIRECT ) ;
         z80_verbose_addOperatorWord( addr , INDIRECT ) ;
     }
     else // LD (xxxx),HL
@@ -271,7 +289,7 @@ void z80_opcode_LoadMemHL( uint8_t opCode )
         z80_memory[ addr + 1 ] = z80_Regs_GetReg( eSelectReg_regH ) ;
 
         z80_verbose_addOperatorWord( addr , INDIRECT ) ;
-        z80_verbose_addOperatorRegister( eSelectReg_regHL , DIRECT ) ;
+        z80_verbose_addOperatorDoubleRegister( eSelectReg_regHL , DIRECT ) ;
     }
 }
 
