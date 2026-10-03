@@ -173,7 +173,7 @@ void z80_opcode_LoadAInd( uint8_t opCode )
      *                   01 - DE
      *
      **********/
-    eReg = ( eSelectDoubleReg_t ) ( ( opCode & 0x30 ) >> 4 ) ; // Bits 5~4.
+    eReg = ( eSelectDoubleReg_t ) ( ( opCode >> 4 ) & 0x03 ) ; // Bits 5~4.
     addr = z80_Regs_GetDReg( eReg ) ;
 
     /**********
@@ -192,7 +192,7 @@ void z80_opcode_LoadAInd( uint8_t opCode )
         z80_Regs_SetReg( eSelectReg_regA , tmp ) ;
 
         z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
-        z80_verbose_addOperatorDoubleRegister( eReg , DIRECT ) ;
+        z80_verbose_addOperatorDoubleRegister( eReg , INDIRECT ) ;
     }
     else
     {
@@ -200,9 +200,15 @@ void z80_opcode_LoadAInd( uint8_t opCode )
         tmp = z80_Regs_GetReg( eSelectReg_regA ) ;
         z80_memory[ addr ] = tmp ;
 
-        z80_verbose_addOperatorDoubleRegister( eReg , DIRECT ) ;
+        z80_verbose_addOperatorDoubleRegister( eReg , INDIRECT ) ;
         z80_verbose_addOperatorRegister( eSelectReg_regA , DIRECT ) ;
     }
+
+    z80_verbose_addComment( "Addr = " ) ;
+    z80_verbose_addCommentWord( addr ) ;
+
+    z80_verbose_addComment( " Data = " ) ;
+    z80_verbose_addCommentByte( tmp ) ;
 }
 
 void z80_opcode_LoadAMem( uint8_t opCode )
@@ -305,7 +311,7 @@ void z80_opcode_LoadSPHL( uint8_t opCode )
     z80_SP = z80_Regs_GetDReg( eSelectReg_regHL ) ;
 
     z80_verbose_addOperator( "SP" , DIRECT ) ;
-    z80_verbose_addOperatorRegister( eSelectReg_regHL , DIRECT ) ;
+    z80_verbose_addOperatorDoubleRegister( eSelectReg_regHL , DIRECT ) ;
 }
 
 void z80_opcode_PUSH( uint8_t opCode )
@@ -350,6 +356,9 @@ void z80_opcode_PUSH( uint8_t opCode )
             z80_verbose_addOperator( "AF" , DIRECT ) ;
             break ;
     }
+
+    z80_verbose_addComment( "Final Stack Pointer is " ) ;
+    z80_verbose_addCommentWord( z80_SP ) ;
 }
 
 void z80_opcode_POP( uint8_t opCode )
@@ -394,6 +403,7 @@ void z80_opcode_POP( uint8_t opCode )
             z80_verbose_addOperator( "AF" , DIRECT ) ;
             break ;
     }
+
+    z80_verbose_addComment( "Final Stack Pointer is " ) ;
+    z80_verbose_addCommentWord( z80_SP ) ;
 }
-
-

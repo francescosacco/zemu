@@ -20,6 +20,7 @@ int kbhit( void ) ;
 int main( int argc , char * argv[] )
 {
     bool setVerbose = false ;
+    bool setStep = false ;
 
     printf( "ZEMU - %s - github.com/francescosacco\n" , VERSION ) ;
     printf( "\n" ) ;
@@ -61,7 +62,16 @@ int main( int argc , char * argv[] )
     {
         z80_setVerbose() ;
         setVerbose = true ;
+        setStep = false ;
     }
+
+    if( ( argc > 2 ) && ( strcmp( argv[ 2 ] , "--step" ) == 0 ) )
+    {
+        z80_setVerbose() ;
+        setVerbose = true ;
+        setStep = true ;
+    }
+
     z80_io_initialization() ;
     z80_reset() ;
 
@@ -76,16 +86,20 @@ int main( int argc , char * argv[] )
         if( kbhit() )
         {
             char chr = getchar() ;
-            // printf("%c", chr) ; //Echo
+
             z80_io_setData( 0x80 , 0x01 ) ;
             z80_io_setData( 0x81 , chr ) ;
             z80_interrupt() ;
         }
 
-        if( setVerbose )
+        if( setVerbose && !setStep )
         {
             // In verbose mode, add a 20ms delay.
             usleep( 20000 ) ;
+        }
+        else if( setStep )
+        {
+            ( void ) getchar() ;
         }
     }
 
@@ -95,7 +109,7 @@ int main( int argc , char * argv[] )
 void print_help( void )
 {
     printf( "\n" ) ;
-    printf( "\tZEMU <z80_Program.bin> [--verbose]\n" ) ;
+    printf( "\tZEMU <z80_Program.bin> [--verbose | --step]\n" ) ;
     printf( "\n" ) ;
 }
 

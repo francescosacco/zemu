@@ -408,14 +408,13 @@ void z80_opcode_RET( uint8_t opCode )
 
         z80_Regs_SetPC( addr ) ;
 
-        z80_verbose_addComment( "It jumped." ) ;
+        z80_verbose_addComment( "It jumped to " ) ;
+        z80_verbose_addCommentWord( addr ) ;
     }
     else
     {
         z80_verbose_addComment( "It didn't jump." ) ;
     }
-
-    z80_verbose_addOperatorWord( addr , DIRECT ) ;
 }
 
 void z80_opcode_RST( uint8_t opCode )
