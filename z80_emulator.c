@@ -269,7 +269,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_RET           , // E0 - 1 Byte  - RET NPV
     z80_opcode_POP           , // E1 - 1 Byte  - POP HL
     z80_opcode_JUMP          , // E2 - 3 Bytes - JP NPV,xxxx
-    z80_opcode_CRASH         , // E3 - Crash
+    z80_opcode_EX_SPHL       , // E3 - 1 Byte  - EX (SP),HL
     z80_opcode_CALL          , // E4 - 3 Bytes - CALL NPV,xxxx
     z80_opcode_PUSH          , // E5 - 1 Byte  - PUSH HL
     z80_opcode_LogicConst    , // E6 - 2 Bytes - AND A,xx

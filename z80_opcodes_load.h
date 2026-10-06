@@ -14,4 +14,6 @@ void z80_opcode_LoadSPHL( uint8_t opCode ) ;
 void z80_opcode_PUSH( uint8_t opCode ) ;
 void z80_opcode_POP( uint8_t opCode ) ;
 
+void z80_opcode_EX_SPHL( uint8_t opCode ) ;
+
 #endif // Z80_OPCODES_LOAD

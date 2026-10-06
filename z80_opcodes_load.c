@@ -407,3 +407,31 @@ void z80_opcode_POP( uint8_t opCode )
     z80_verbose_addComment( "Final Stack Pointer is " ) ;
     z80_verbose_addCommentWord( z80_SP ) ;
 }
+
+void z80_opcode_EX_SPHL( uint8_t opCode )
+{
+    /**********
+     * Opcode - E3h - EX (SP),HL
+     * Size   - 1 Byte
+     **********/
+    z80_verbose_addOpcode( opCode ) ;
+
+    z80_verbose_addMnemonic( "EX" ) ;
+    z80_verbose_addOperator( "SP" , INDIRECT ) ;
+    z80_verbose_addOperator( "HL" , DIRECT ) ;
+
+    /**********
+     * Execute!
+     **********/
+    
+    uint8_t tmpH , tmpL ;
+    
+    tmpL = z80_memory[ z80_SP     ] ;
+    tmpH = z80_memory[ z80_SP + 1 ] ;
+    
+    z80_memory[ z80_SP     ] = z80_Regs_GetReg( eSelectReg_regL ) ;
+    z80_memory[ z80_SP + 1 ] = z80_Regs_GetReg( eSelectReg_regH ) ;
+
+    z80_Regs_SetReg( eSelectReg_regH , tmpH ) ;
+    z80_Regs_SetReg( eSelectReg_regL , tmpL ) ;
+}

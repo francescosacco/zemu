@@ -293,8 +293,8 @@ void z80_opcode_CALL( uint8_t opCode )
      **********/
     if( shouldJump )
     {
-        z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetPC() >> 8 ;
-        z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetPC()      ;
+        z80_memory[ --z80_SP ] = ( uint8_t ) ( z80_Regs_GetPC() >> 8 ) ;
+        z80_memory[ --z80_SP ] = ( uint8_t )   z80_Regs_GetPC()        ;
 
         z80_Regs_SetPC( addr ) ;
 
