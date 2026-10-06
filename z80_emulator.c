@@ -86,7 +86,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_IncDecReg  , // 34 - 1 Byte  - INC (HL)
     z80_opcode_IncDecReg  , // 35 - 1 Byte  - DEC (HL)
     z80_opcode_LoadRegC   , // 36 - 2 Bytes - LD (HL),xx
-    z80_opcode_CRASH      , // 37 - Crash
+    z80_opcode_SCF        , // 37 - 1 Byte  - SCF
     z80_opcode_JR         , // 38 - 2 Bytes - JR C,xx
     z80_opcode_CRASH      , // 39 - Crash
     z80_opcode_LoadAMem   , // 3A - 3 Bytes - LD A,(xxxx)
@@ -314,8 +314,6 @@ void z80_interrupt( void )
     {
         return ;
     }
-
-    printf( "[ ===== Interrupt! ===== ]\n" ) ;
 
     switch( z80_Regs_GetIM() )
     {

@@ -435,3 +435,44 @@ void z80_opcode_EX_SPHL( uint8_t opCode )
     z80_Regs_SetReg( eSelectReg_regH , tmpH ) ;
     z80_Regs_SetReg( eSelectReg_regL , tmpL ) ;
 }
+
+void z80_opcode_SCF( uint8_t opCode )
+{
+    /**********
+     * Opcode - 37h - SCF
+     * Size   - 1 Byte
+     **********/
+    z80_verbose_addOpcode( opCode ) ;
+
+    z80_verbose_addMnemonic( "SCF" ) ;
+
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
+    z80_Flags_SetCarry() ;
+
+    // --- Add/Sub -----------
+    z80_Flags_ResetN() ;
+
+    // --- Parity/OverFlow ---
+    // No change.
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    z80_Flags_ResetHalf() ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    // No change.
+
+    // --- Sign Flag ---------
+    // No change.
+ 
+    z80_verbose_addFlags( z80_Flags_GetF() ) ;
+}
