@@ -459,8 +459,8 @@ void z80_opcode_RST( uint8_t opCode )
     /**********
      * Memory Write!
      **********/
-    z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetPC() >> 8 ;
-    z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetPC()      ;
+    z80_memory[ --z80_SP ] = ( uint8_t ) ( z80_Regs_GetPC() >> 8 ) ;
+    z80_memory[ --z80_SP ] = ( uint8_t )   z80_Regs_GetPC()        ;
 
     z80_Regs_SetPC( addr ) ;
     z80_verbose_addOperatorWord( addr , DIRECT ) ;
