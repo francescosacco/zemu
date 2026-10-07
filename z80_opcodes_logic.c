@@ -209,3 +209,120 @@ void z80_opcode_LogicConst( uint8_t opCode )
     
     z80_verbose_addFlags( z80_Flags_GetF() ) ;
 }
+
+void z80_opcode_Rotate( uint8_t opCode )
+{
+    /**********
+     * Opcode - 07h - RLCA
+     *          0Fh - RRCA
+     *          17h - RLA
+     *          1Fh - RRA
+     *
+     * Size   - 1 Byte
+     *
+     *   7   6   5   4   3   2   1   0
+     * +---+---+---+---+---+---+---+---+
+     * | 0 | 0 | 0 | C | D | 1 | 1 | 1 |
+     * +---+---+---+---+---+---+---+---+
+     *              \ / \ /
+     *               |   |
+     *               |   +---> 0 - Left, 1 - Right.
+     *               +-------> Carry
+     *
+     **********/
+    z80_verbose_addOpcode( opCode ) ;
+
+    /**********
+     * Memory Read!
+     **********/
+
+    uint8_t tmpA = z80_Regs_GetReg( eSelectReg_regA ) ;
+    uint8_t oldA = tmpA ;
+    uint8_t tmpC = 0x00 ;
+
+    /**********
+     * Execute!
+     **********/
+
+    if( opCode & 0x08 )
+    {
+        // Rotate right.
+        tmpC = ( tmpA & 0x01 ) != 0x00 ;
+
+        tmpA >>= 1 ;
+        tmpA &= 0x7F ; // Reset bit 7.
+        
+        if( opCode & 0x10 )
+        {
+            z80_verbose_addMnemonic( "RRA" ) ;
+            tmpA |= ( z80_flags.c ) ? ( 0x80 ) : ( 0x00 ) ; // Set bit 0.
+        }
+        else
+        {
+            z80_verbose_addMnemonic( "RRCA" ) ;
+            tmpA |= ( tmpC ) ? ( 0x80 ) : ( 0x00 ) ; // Set bit 0.
+        }
+        
+    }
+    else
+    {
+        // Rotate left.
+        tmpC = ( tmpA & 0x80 ) != 0x00 ;
+
+        tmpA <<= 1 ;
+        tmpA &= 0xFE ; // Reset bit 0.
+
+        if( opCode & 0x10 )
+        {
+            z80_verbose_addMnemonic( "RLA" ) ;
+            tmpA |= ( z80_flags.c ) ? ( 0x01 ) : ( 0x00 ) ; // Set bit 0.
+        }
+        else
+        {
+            z80_verbose_addMnemonic( "RLCA" ) ;
+            tmpA |= ( tmpC ) ? ( 0x01 ) : ( 0x00 ) ; // Set bit 0.
+        }   
+    }
+
+    /**********
+     * Memory Write!
+     **********/
+
+    // Write Accumulator.
+    z80_Regs_SetReg( eSelectReg_regA , tmpA ) ;
+
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
+    z80_flags.c = tmpC ;
+
+    // --- Add/Sub -----------
+    z80_Flags_ResetN() ;
+
+    // --- Parity/OverFlow ---
+    // No change.
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    z80_Flags_ResetHalf() ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    // No change.
+
+    // --- Sign Flag ---------
+    // No change.
+    
+    z80_verbose_addComment( "Accumulator " ) ;
+    z80_verbose_addCommentByte( oldA ) ;
+    z80_verbose_addComment( " -> " ) ;
+    z80_verbose_addCommentByte( tmpA ) ;
+
+    z80_verbose_addFlags( z80_Flags_GetF() ) ;
+}
