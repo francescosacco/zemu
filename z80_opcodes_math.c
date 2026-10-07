@@ -582,3 +582,46 @@ void z80_opcode_SUB( uint8_t opCode )
         z80_verbose_addOperatorRegister( eReg            , DIRECT ) ;
     }
 }
+
+void z80_opcode_CPL( uint8_t opCode )
+{
+    /**********
+     * Opcode - 2Fh - CPL
+     * Size   - 1 Byte
+     **********/
+    z80_verbose_addOpcode( opCode ) ;
+    z80_verbose_addMnemonic( "CPL" ) ;
+
+    uint8_t tmpA ;
+
+    tmpA = z80_Regs_GetReg( eSelectReg_regA ) ;
+    z80_Regs_SetReg( eSelectReg_regA , ~tmpA ) ;
+
+    /**********
+     * FLAGS.
+     **********/
+
+    // --- Carry -------------
+    // No change.
+
+    // --- Add/Sub -----------
+    z80_Flags_SetN() ;
+
+    // --- Parity/OverFlow ---
+    // No change.
+
+    // --- X3 ----------------
+    // No change.
+
+    // --- Half Carry Flag ---
+    z80_Flags_SetHalf() ;
+
+    // --- X5 ----------------
+    // No change.
+
+    // --- Zero Flag ---------
+    // No change.
+
+    // --- Sign Flag ---------
+    // No change.
+}

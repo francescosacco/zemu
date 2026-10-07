@@ -13,4 +13,6 @@ void z80_opcode_SUB( uint8_t opCode ) ;
 
 void z80_opcode_CP( uint8_t opCode ) ;
 
+void z80_opcode_CPL( uint8_t opCode ) ;
+
 #endif // Z80_OPCODES_MATH

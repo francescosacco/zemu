@@ -77,7 +77,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_IncDecReg  , // 2C - 1 Byte  - INC L
     z80_opcode_IncDecReg  , // 2D - 1 Byte  - DEC L
     z80_opcode_LoadRegC   , // 2E - 2 Bytes - LD L,xx
-    z80_opcode_CRASH      , // 2F - Crash
+    z80_opcode_CPL        , // 2F - 1 Byte  - CPL
 
     z80_opcode_JR         , // 30 - 2 Bytes - JR NC,xx
     z80_opcode_LoadDRegC  , // 31 - 3 Bytes - LD SP,xxxx
