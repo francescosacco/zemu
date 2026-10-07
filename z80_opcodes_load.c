@@ -436,43 +436,83 @@ void z80_opcode_EX_SPHL( uint8_t opCode )
     z80_Regs_SetReg( eSelectReg_regL , tmpL ) ;
 }
 
-void z80_opcode_SCF( uint8_t opCode )
+void z80_opcode_xCF( uint8_t opCode )
 {
     /**********
      * Opcode - 37h - SCF
+     *          3Fh - CCF
      * Size   - 1 Byte
      **********/
     z80_verbose_addOpcode( opCode ) ;
 
-    z80_verbose_addMnemonic( "SCF" ) ;
+    if( opCode & 0x08 )
+    {
+        z80_verbose_addMnemonic( "CCF" ) ;
 
-    /**********
-     * FLAGS.
-     **********/
+        // Save the old Carry flag.
+        uint8_t oldC = z80_flags.c ;
 
-    // --- Carry -------------
-    z80_Flags_SetCarry() ;
+        /**********
+         * FLAGS.
+         **********/
 
-    // --- Add/Sub -----------
-    z80_Flags_ResetN() ;
+        // --- Carry -------------
+        z80_flags.c = !z80_flags.c ;
 
-    // --- Parity/OverFlow ---
-    // No change.
+        // --- Add/Sub -----------
+        z80_Flags_ResetN() ;
 
-    // --- X3 ----------------
-    // No change.
+        // --- Parity/OverFlow ---
+        // No change.
 
-    // --- Half Carry Flag ---
-    z80_Flags_ResetHalf() ;
+        // --- X3 ----------------
+        // No change.
 
-    // --- X5 ----------------
-    // No change.
+        // --- Half Carry Flag ---
+        z80_flags.h = oldC ;
 
-    // --- Zero Flag ---------
-    // No change.
+        // --- X5 ----------------
+        // No change.
 
-    // --- Sign Flag ---------
-    // No change.
+        // --- Zero Flag ---------
+        // No change.
+
+        // --- Sign Flag ---------
+        // No change.
+    }
+    else
+    {
+        z80_verbose_addMnemonic( "SCF" ) ;
+
+        /**********
+         * FLAGS.
+         **********/
+
+        // --- Carry -------------
+        z80_Flags_SetCarry() ;
+
+        // --- Add/Sub -----------
+        z80_Flags_ResetN() ;
+
+        // --- Parity/OverFlow ---
+        // No change.
+
+        // --- X3 ----------------
+        // No change.
+
+        // --- Half Carry Flag ---
+        z80_Flags_ResetHalf() ;
+
+        // --- X5 ----------------
+        // No change.
+
+        // --- Zero Flag ---------
+        // No change.
+
+        // --- Sign Flag ---------
+        // No change.
+    }
+
  
     z80_verbose_addFlags( z80_Flags_GetF() ) ;
 }

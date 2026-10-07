@@ -86,7 +86,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_IncDecReg  , // 34 - 1 Byte  - INC (HL)
     z80_opcode_IncDecReg  , // 35 - 1 Byte  - DEC (HL)
     z80_opcode_LoadRegC   , // 36 - 2 Bytes - LD (HL),xx
-    z80_opcode_SCF        , // 37 - 1 Byte  - SCF
+    z80_opcode_xCF        , // 37 - 1 Byte  - SCF
     z80_opcode_JR         , // 38 - 2 Bytes - JR C,xx
     z80_opcode_DoubleADD  , // 39 - 1 Byte  - ADD HL,SP
     z80_opcode_LoadAMem   , // 3A - 3 Bytes - LD A,(xxxx)
@@ -94,7 +94,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_IncDecReg  , // 3C - 1 Byte  - INC A
     z80_opcode_IncDecReg  , // 3D - 1 Byte  - DEC A
     z80_opcode_LoadRegC   , // 3E - 2 Bytes - LD A,xx
-    z80_opcode_CRASH      , // 3F - Crash
+    z80_opcode_xCF        , // 3F - 1 Byte  - CCF
 
     z80_opcode_LoadRegReg , // 40 - 1 Byte  - LD B,B
     z80_opcode_LoadRegReg , // 41 - 1 Byte  - LD B,C
