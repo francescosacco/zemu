@@ -86,6 +86,11 @@ int main( int argc , char * argv[] )
         if( kbhit() )
         {
             char chr = getchar() ;
+            
+            if( chr == 0x0A )
+            {
+                chr = 0x0D ;
+            }
 
             z80_io_setData( 0x80 , 0x01 ) ;
             z80_io_setData( 0x81 , chr ) ;

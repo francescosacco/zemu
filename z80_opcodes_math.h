@@ -7,6 +7,7 @@ void z80_opcode_IncDecDReg( uint8_t opCode ) ;
 void z80_opcode_IncDecReg( uint8_t opCode ) ;
 
 void z80_opcode_ADD( uint8_t opCode ) ;
+void z80_opcode_DoubleADD( uint8_t opCode ) ;
 
 void z80_opcode_SUB( uint8_t opCode ) ;
 

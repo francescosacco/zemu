@@ -339,6 +339,11 @@ void z80_Flags_CalculateHalf_adc( uint8_t a , uint8_t b , bool c )
     z80_flags.h = ( ( a & 0x0F ) + ( b & 0x0F ) + carry ) > 0x0F ;
 }
 
+void z80_Flags_CalculateHalf_DoubleADC( uint16_t a , uint16_t b )
+{
+    z80_flags.h = ( ( a & 0xFF ) + ( b & 0xFF ) ) > 0xFF ;
+}
+
 uint8_t z80_Flags_GetF( void )
 {
     uint8_t flags = 0x00 ;
