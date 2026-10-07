@@ -115,6 +115,28 @@ void z80_opcode_JUMP( uint8_t opCode )
     }
 }
 
+void z80_opcode_JUMP_HL( uint8_t opCode )
+{
+    uint16_t addr ;
+
+    /**********
+     * Opcode - E9h - JP (HL)
+     * Size   - 1 Byte
+     **********/
+    z80_verbose_addOpcode( opCode ) ;
+    z80_verbose_addMnemonic( "JP" ) ;
+    z80_verbose_addOperatorDoubleRegister( eSelectReg_regHL , INDIRECT ) ;
+
+    addr = z80_Regs_GetDReg( eSelectReg_regHL ) ;
+
+    /**********
+     * Memory Write!
+     **********/
+    z80_Regs_SetPC( addr ) ;
+    z80_verbose_addComment( "Jumped to " ) ;
+    z80_verbose_addCommentWord( addr ) ;
+}
+
 void z80_opcode_JR( uint8_t opCode )
 {
     int8_t tmp ;

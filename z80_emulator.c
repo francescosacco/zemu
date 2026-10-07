@@ -275,7 +275,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_LogicConst    , // E6 - 2 Bytes - AND A,xx
     z80_opcode_RST           , // E7 - 1 Byte  - RST 20h
     z80_opcode_RET           , // E8 - 1 Byte  - RET PV
-    z80_opcode_CRASH         , // E9 - Crash
+    z80_opcode_JUMP_HL       , // E9 - 1 Byte  - JP (HL)
     z80_opcode_JUMP          , // EA - 3 Bytes - JP PV,xxxx
     z80_opcode_EX            , // EB - 1 Byte  - EX DE,HL
     z80_opcode_CALL          , // EC - 3 Bytes - CALL PV,xxxx

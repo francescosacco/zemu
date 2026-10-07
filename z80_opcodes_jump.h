@@ -11,4 +11,6 @@ void z80_opcode_RET( uint8_t opCode ) ;
 void z80_opcode_RST( uint8_t opCode ) ;
 void z80_opcode_DJNZ( uint8_t opCode ) ;
 
+void z80_opcode_JUMP_HL( uint8_t opCode ) ;
+
 #endif // Z80_OPCODES_JUMP
