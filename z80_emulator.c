@@ -321,8 +321,8 @@ void z80_interrupt( void )
             // TODO!
             break;
         case eInterruptMode_1:
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetPC() >> 8 ;
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetPC()      ;
+            z80_memory[ --z80_SP ] = ( uint8_t ) ( z80_Regs_GetPC() >> 8 ) ;
+            z80_memory[ --z80_SP ] = ( uint8_t ) ( z80_Regs_GetPC()      ) ;
 
             z80_Regs_SetPC( 0x0038 ) ;
             break;
