@@ -5,6 +5,8 @@
 
 #include "z80_verbose.h"
 
+#include <stdlib.h> // for exit().
+
 void z80_opcode_Extended_IX( uint8_t opCode )
 {
     uint8_t subOpCode = z80_memory[ z80_Regs_GetAndIncPC() ] ;
@@ -129,6 +131,7 @@ void z80_opcode_Extended_IX( uint8_t opCode )
             z80_verbose_addOpcode( opCode ) ;
             z80_verbose_addOpcode( subOpCode ) ;
             z80_verbose_addComment( "Not implemented!" ) ;
+            exit( 0 ) ;
             break ;
     }
 

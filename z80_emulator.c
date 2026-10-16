@@ -17,6 +17,7 @@
 #include "z80_opcodes_logic.h"
 #include "z80_opcodes_math.h"
 #include "z80_opcodes_extended_ix.h"
+#include "z80_opcodes_extended_iy.h"
 #include "z80_opcodes_extended_bits.h"
 #include "z80_opcodes_extended_misc.h"
 
@@ -296,7 +297,7 @@ pFunc_t z80_opcodesExecution[] =
     z80_opcode_JUMP       , // FA - 3 Bytes - JP S,xxxx
     z80_opcode_DEI        , // FB - 1 Byte  - EI
     z80_opcode_CALL       , // FC - 3 Bytes - CALL S,xxxx
-    z80_opcode_CRASH      , // FD - Crash
+    z80_opcode_Extended_IY, // FD - Extended IY
     z80_opcode_CP         , // FE - 2 Bytes - CP XX
     z80_opcode_RST        , // FF - 1 Byte  - RST 38h
 } ;

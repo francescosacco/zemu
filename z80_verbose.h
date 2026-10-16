@@ -1,3 +1,15 @@
+/**
+ * @file z80_verbose.h
+ * @author Francesco Sacco
+ * @date 25 Mar 2025
+ * @brief This library provides functions for verbose output of opcode execution.
+ *
+ * This library aims to provide functions dedicated to information about opcodes,
+ * arguments, and values. This information will be presented via standard output
+ * to allow for the monitoring of the execution of each opcode.
+ *
+ * @see https://github.com/francescosacco/zemu
+ */
 #ifndef Z80_VERBOSE
 #define Z80_VERBOSE
 
