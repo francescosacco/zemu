@@ -4,6 +4,7 @@
 #include "z80_memory.h"
 
 #include "z80_verbose.h"
+#include "z80_utils.h"
 
 #include <stdlib.h> // for exit().
 
@@ -27,8 +28,8 @@ void z80_opcode_Extended_IX( uint8_t opCode )
             tmp16  = z80_memory[ z80_Regs_GetAndIncPC() ] ;
             tmp16 |= ( ( uint16_t ) z80_memory[ z80_Regs_GetAndIncPC() ] ) << 8 ;
 
-            z80_verbose_addOpcode( ( uint8_t ) ( tmp16 &  0x00FF ) ) ;
-            z80_verbose_addOpcode( ( uint8_t ) ( tmp16 >>      8 ) ) ;
+            z80_verbose_addOpcode( GETLSB( tmp16 ) ) ;
+            z80_verbose_addOpcode( GETMSB( tmp16 ) ) ;
 
             z80_verbose_addOperator( "IX" , DIRECT ) ;
             z80_verbose_addOperatorWord( tmp16 , DIRECT ) ;
@@ -65,8 +66,8 @@ void z80_opcode_Extended_IX( uint8_t opCode )
             tmp16 = z80_Regs_GetIX() ;
             z80_verbose_addOperator( "IX" , DIRECT ) ;
 
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( ( uint8_t ) ( tmp16 >>      8 ) ) ;
-            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( ( uint8_t ) ( tmp16 &  0x00FF ) ) ;
+            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( GETMSB( tmp16 ) ) ;
+            z80_memory[ --z80_SP ] = ( uint8_t ) z80_Regs_GetReg( GETLSB( tmp16 ) ) ;
             break;
 
         case 0xE1 : // POP IX
@@ -78,8 +79,8 @@ void z80_opcode_Extended_IX( uint8_t opCode )
             z80_verbose_addOpcode( subOpCode ) ;
             z80_verbose_addMnemonic( "POP" ) ;
 
-            tmp16 =   ( uint16_t ) z80_memory[ z80_SP++ ]        ; // LSB
-            tmp16 = ( ( uint16_t ) z80_memory[ z80_SP++ ] ) << 8 ; // MSB
+            tmp16  =   ( uint16_t ) z80_memory[ z80_SP++ ]        ; // LSB
+            tmp16 |= ( ( uint16_t ) z80_memory[ z80_SP++ ] ) << 8 ; // MSB
 
             z80_Regs_SetIX( tmp16 ) ;
             z80_verbose_addOperator( "IX" , DIRECT ) ;
